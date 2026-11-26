@@ -317,8 +317,10 @@
 
   let model = null, webcam = null, demo = false, running = false;
   let lastPred = null, autoTimer = null, loopId = null;
+  let predSeq = 0, recordedSeq = -1; // 같은 인식 결과를 두 번 기록하지 않기 위한 번호
   let log = [];
-  try { log = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e){ log = []; }
+  const loadLog = () => { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e){ return []; } };
+  log = loadLog();
 
   // ---------- 공통 ----------
   const pad = n => String(n).padStart(2,'0');
@@ -380,14 +382,29 @@
     if (!running) return;
     if (webcam){ webcam.update(); }
     try {
-      lastPred = await predictFrom(webcam ? webcam.canvas : null);
+      lastPred = await predictFrom(webcam ? webcam.canvas : null); predSeq++;
       renderProbs(lastPred);
     } catch(e){ console.error(e); }
     loopId = setTimeout(() => requestAnimationFrame(loop), demo ? 700 : 120);
   }
 
+  // 지금 화면으로 새로 인식 (자동·수동 판정 모두 최신 결과로 기록)
+  async function freshPredict(){
+    if (demo){ lastPred = demoPredict(); }
+    else if (webcam && model){ webcam.update(); lastPred = await model.predict(webcam.canvas); }
+    else return;
+    predSeq++; renderProbs(lastPred);
+  }
+
+  async function autoTick(){
+    if (document.hidden || !running) return;
+    await freshPredict();
+    record();
+  }
+
   function record(){
-    if (!lastPred) return;
+    if (!lastPred || predSeq === recordedSeq) return; // 이미 기록한 결과는 다시 안 쌓음
+    recordedSeq = predSeq;
     const j = judge(lastPred);
     if (!j){ showVerdict(null); return; }
     const now = new Date();
@@ -395,6 +412,7 @@
       ts: now.getTime(), line: $('line').value.trim() || '-', lot: $('lot').value.trim() || '-',
       kind: j.kind, result: j.result, confidence: Number(j.confidence.toFixed(3)), sample: demo
     };
+    log = loadLog(); // 다른 탭에서 쌓인 기록을 덮어쓰지 않도록 다시 읽기
     log.push(item);
     if (log.length > 2000) log = log.slice(-2000);
     localStorage.setItem(STORE_KEY, JSON.stringify(log));
@@ -544,7 +562,7 @@
     $('btnStart').disabled = true; $('btnStop').disabled = false;
     loop();
     const iv = Number($('interval').value);
-    if (iv > 0) autoTimer = setInterval(record, iv);
+    if (iv > 0) autoTimer = setInterval(autoTick, iv);
   }
 
   function stop(){
@@ -562,15 +580,24 @@
     if (!running) return;
     clearInterval(autoTimer); autoTimer = null;
     const iv = Number($('interval').value);
-    if (iv > 0) autoTimer = setInterval(record, iv);
+    if (iv > 0) autoTimer = setInterval(autoTick, iv);
+  });
+
+  // 다른 탭으로 이동하면 판정을 멈춤 (멈춘 화면이 반복 기록되는 것 방지)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && running){
+      stop();
+      setStatus('다른 탭으로 이동해서 판정을 멈췄어요. 다시 "판정 시작"을 눌러 주세요.');
+    }
+  });
+
+  // 다른 탭에서 기록이 바뀌면 이 화면도 갱신
+  window.addEventListener('storage', (e) => {
+    if (e.key === STORE_KEY || e.key === null){ log = loadLog(); renderDashboard(); }
   });
 
   $('btnJudge').addEventListener('click', async () => {
-    if (!running){
-      // 정지 상태에서 한 번만 판정
-      if (demo){ lastPred = demoPredict(); renderProbs(lastPred); }
-      else if (webcam){ webcam.update(); lastPred = await model.predict(webcam.canvas); renderProbs(lastPred); }
-    }
+    await freshPredict(); // 누를 때마다 새로 인식해서 판정
     record();
   });
 
@@ -588,7 +615,7 @@
       const cv = document.createElement('canvas');
       cv.width = img.naturalWidth; cv.height = img.naturalHeight;
       cv.getContext('2d').drawImage(img, 0, 0);
-      lastPred = await model.predict(cv);
+      lastPred = await model.predict(cv); predSeq++;
       renderProbs(lastPred);
       record();
     };
