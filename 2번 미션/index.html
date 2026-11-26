@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비전체커 VisionChecker · 6팀 해커트리오</title>
+<style>
+  :root{
+    --bg:#f3f5f9; --card:#fff; --ink:#1b2333; --sub:#5b6577; --line:#dfe4ec;
+    --navy:#14213d; --ok:#1f9d55; --ng:#d64545; --re:#e0a100; --accent:#2f6fed;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  header{background:var(--navy);color:#fff;padding:14px 20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+  header h1{margin:0;font-size:1.35rem}
+  header .tag{font-size:.85rem;opacity:.8}
+  main{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
+  .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card h2{margin:0 0 12px;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+  .card h2 .num{background:var(--navy);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem}
+  label{font-size:.85rem;color:var(--sub);display:block;margin:10px 0 4px}
+  input[type=file]{max-width:100%}
+  input[type=text],input[type=url],select{width:100%;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:.95rem}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .row > *{flex:1 1 120px}
+  button{border:0;border-radius:8px;padding:10px 14px;font-size:.95rem;font-weight:600;cursor:pointer;background:#e8ecf3;color:var(--ink)}
+  button.primary{background:var(--accent);color:#fff}
+  button.dark{background:var(--navy);color:#fff}
+  button.danger{background:#fbe9e9;color:var(--ng)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .hint{font-size:.8rem;color:var(--sub);margin-top:6px}
+  .status{font-size:.85rem;margin-top:8px;padding:8px 10px;border-radius:8px;background:#eef3ff;color:#23408e}
+  .status.err{background:#fdecec;color:#a12b2b}
+  .status.ok{background:#e9f7ef;color:#17663a}
+  #stage{position:relative;background:#0e1424;border-radius:10px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:12px}
+  #stage canvas,#stage img{max-width:100%;max-height:100%;display:block}
+  #stage .placeholder{color:#9aa6bd;font-size:.9rem;text-align:center;padding:20px}
+  #liveBadge{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.6);color:#fff;font-size:.8rem;padding:4px 8px;border-radius:6px;display:none}
+  .slider{display:flex;align-items:center;gap:10px}
+  .slider input{flex:1}
+  .slider b{min-width:48px;text-align:right}
+  .probs{margin-top:10px;display:grid;gap:4px}
+  .prob{display:grid;grid-template-columns:110px 1fr 46px;gap:8px;align-items:center;font-size:.82rem}
+  .prob .bar{height:10px;background:#edf0f5;border-radius:5px;overflow:hidden}
+  .prob .bar i{display:block;height:100%;background:var(--accent)}
+  .verdict{display:flex;align-items:center;gap:14px;border-radius:12px;padding:14px;border:2px solid var(--line);margin-bottom:12px}
+  .verdict .big{font-size:1.6rem;font-weight:800;min-width:84px;text-align:center;padding:8px 10px;border-radius:10px;color:#fff;background:#9aa6bd}
+  .verdict.ok{border-color:var(--ok)} .verdict.ok .big{background:var(--ok)}
+  .verdict.ng{border-color:var(--ng)} .verdict.ng .big{background:var(--ng)}
+  .verdict.re{border-color:var(--re)} .verdict.re .big{background:var(--re)}
+  .verdict .meta{font-size:.9rem}
+  .verdict .meta strong{font-size:1.1rem}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+  .kpi{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+  .kpi span{display:block;font-size:.75rem;color:var(--sub)}
+  .kpi b{font-size:1.3rem}
+  .kpi.ok b{color:var(--ok)} .kpi.ng b{color:var(--ng)} .kpi.re b{color:var(--re)}
+  .chartTitle{font-size:.85rem;font-weight:700;margin:12px 0 6px}
+  .stack{display:grid;gap:6px}
+  .stackRow{display:grid;grid-template-columns:90px 1fr 40px;gap:8px;align-items:center;font-size:.82rem}
+  .stackBar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:#edf0f5}
+  .stackBar i{display:block;height:100%}
+  .legend{display:flex;gap:12px;font-size:.75rem;color:var(--sub);margin-top:6px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+  svg{width:100%;height:auto;display:block}
+  .tableWrap{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+  table{width:100%;border-collapse:collapse;font-size:.82rem}
+  th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  th{background:#f7f9fc;position:sticky;top:0}
+  .pill{padding:2px 8px;border-radius:10px;color:#fff;font-size:.75rem;font-weight:700}
+  .pill.ok{background:var(--ok)} .pill.ng{background:var(--ng)} .pill.re{background:var(--re)}
+  .sample{font-size:.7rem;color:#8a5a00;background:#fff4d6;border-radius:6px;padding:1px 6px;margin-left:4px}
+  .empty{color:var(--sub);font-size:.85rem;text-align:center;padding:16px}
+  footer{max-width:1200px;margin:0 auto;padding:4px 16px 24px;font-size:.78rem;color:var(--sub)}
+  details{margin-top:10px;font-size:.85rem}
+  details summary{cursor:pointer;color:var(--accent)}
+  @media (max-width:860px){
+    main{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    header h1{font-size:1.15rem}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>비전체커 VisionChecker</h1>
+  <span class="tag">AI 물체인식 분류 · 불량 판정 · 생산통계 | 6팀 해커트리오 (부천대 전자공학과·스마트팩토리전공)</span>
+</header>
+
+<main>
+  <!-- 입력 화면 -->
+  <section class="card" aria-labelledby="inTitle">
+    <h2 id="inTitle"><span class="num">1</span>입력 · 물체인식 판정</h2>
+
+    <label for="modelUrl">Teachable Machine 모델 URL</label>
+    <div class="row">
+      <input type="url" id="modelUrl" placeholder="https://teachablemachine.withgoogle.com/models/XXXX/">
+      <button class="dark" id="btnLoad" style="flex:0 0 auto">모델 불러오기</button>
+    </div>
+    <div class="hint">클래스 이름은 <b>종류_양품</b>, <b>종류_불량</b> 형식을 권장해요 (예: 볼트_양품, 볼트_불량, 배경). "배경"이나 "없음" 클래스는 기록하지 않아요.</div>
+    <div class="row" style="margin-top:8px">
+      <button id="btnDemo">모델 없이 데모 모드(샘플 데이터)</button>
+    </div>
+    <div id="modelStatus" class="status">모델을 불러오거나 데모 모드를 켜 주세요.</div>
+
+    <div class="row">
+      <div>
+        <label for="line">라인</label>
+        <input type="text" id="line" value="L1">
+      </div>
+      <div>
+        <label for="lot">로트 번호</label>
+        <input type="text" id="lot" value="LOT-001">
+      </div>
+    </div>
+
+    <label for="th">불량 판정 기준값 (신뢰도가 이 값보다 낮으면 "재검")</label>
+    <div class="slider">
+      <input type="range" id="th" min="50" max="99" value="80">
+      <b id="thVal">80%</b>
+    </div>
+
+    <label for="interval">자동 판정 간격</label>
+    <select id="interval">
+      <option value="0">수동 (버튼을 눌러 한 개씩 판정)</option>
+      <option value="2000">자동 2초마다</option>
+      <option value="3000" selected>자동 3초마다</option>
+      <option value="5000">자동 5초마다</option>
+    </select>
+
+    <div class="row" style="margin-top:12px">
+      <button class="primary" id="btnStart" disabled>판정 시작</button>
+      <button id="btnStop" disabled>정지</button>
+      <button class="dark" id="btnJudge" disabled>지금 판정</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <label style="margin:0;flex:1 1 100%">웹캠이 없으면 사진으로 테스트</label>
+      <input type="file" id="imgFile" accept="image/*" disabled>
+    </div>
+
+    <div id="stage">
+      <div class="placeholder" id="placeholder">웹캠 영상이 여기에 표시돼요.<br>모바일에서는 후면 카메라를 사용해요.</div>
+      <span id="liveBadge">● 판정 중</span>
+    </div>
+
+    <div class="chartTitle">실시간 인식 결과</div>
+    <div class="probs" id="probs"><div class="empty">아직 인식 결과가 없어요.</div></div>
+  </section>
+
+  <!-- 결과 화면 -->
+  <section class="card" aria-labelledby="outTitle">
+    <h2 id="outTitle"><span class="num">2</span>결과 · 생산통계 대시보드</h2>
+
+    <div class="verdict" id="verdict">
+      <div class="big" id="vBig">대기</div>
+      <div class="meta">
+        <div><strong id="vClass">-</strong></div>
+        <div>신뢰도 <b id="vConf">-</b> · <span id="vTime">-</span></div>
+        <div id="vLot" class="hint" style="margin:0">-</div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><span>총 처리</span><b id="kTotal">0</b></div>
+      <div class="kpi ok"><span>양품</span><b id="kOk">0</b></div>
+      <div class="kpi ng"><span>불량</span><b id="kNg">0</b></div>
+      <div class="kpi re"><span>재검</span><b id="kRe">0</b></div>
+      <div class="kpi"><span>불량률</span><b id="kRate">0%</b></div>
+    </div>
+    <div class="hint" style="margin-top:-6px">불량률 = 불량 ÷ (양품 + 불량) × 100, 재검은 따로 집계</div>
+
+    <div class="chartTitle">종류별 수량</div>
+    <div class="stack" id="byClass"><div class="empty">데이터가 없어요.</div></div>
+    <div class="legend"><span><i style="background:var(--ok)"></i>양품</span><span><i style="background:var(--ng)"></i>불량</span><span><i style="background:var(--re)"></i>재검</span></div>
+
+    <div class="chartTitle">시간대별 불량률 추이 (분 단위)</div>
+    <div id="trend"><div class="empty">데이터가 없어요.</div></div>
+
+    <div class="chartTitle" style="display:flex;justify-content:space-between;align-items:center">
+      <span>최근 판정 기록</span>
+      <button class="danger" id="btnReset" style="padding:6px 10px;font-size:.8rem">기록 초기화</button>
+    </div>
+    <div class="tableWrap">
+      <table>
+        <thead><tr><th>시각</th><th>라인</th><th>로트</th><th>종류</th><th>판정</th><th>신뢰도</th></tr></thead>
+        <tbody id="logBody"><tr><td colspan="6" class="empty">아직 기록이 없어요.</td></tr></tbody>
+      </table>
+    </div>
+    <div class="hint">기록은 이 브라우저(localStorage)에만 저장돼요. 서버로 보내지 않아요.</div>
+  </section>
+</main>
+
+<footer>
+  비전체커 시제품 v0.1 · 로그인·결제·서버 없이 브라우저에서만 동작 · "샘플" 표시가 붙은 기록은 데모 모드에서 만든 실습용 데이터이며 실제 기업 데이터가 아니에요.
+</footer>
+
+<!-- Teachable Machine 라이브러리 (CDN, 빌드 불필요) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const STORE_KEY = 'visionchecker_log_v1';
+  const IGNORE = ['배경','없음','background','none','empty'];
+  const DEMO_CLASSES = ['볼트_양품','볼트_불량','너트_양품','너트_불량','와셔_양품','와셔_불량'];
+
+  let model = null, webcam = null, demo = false, running = false;
+  let lastPred = null, autoTimer = null, loopId = null;
+  let log = [];
+  try { log = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e){ log = []; }
+
+  // ---------- 공통 ----------
+  const pad = n => String(n).padStart(2,'0');
+  const fmtTime = d => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const threshold = () => Number($('th').value) / 100;
+
+  function setStatus(msg, type){
+    const el = $('modelStatus');
+    el.textContent = msg;
+    el.className = 'status' + (type ? ' ' + type : '');
+  }
+
+  // 클래스 이름 → 종류/상태 해석
+  function parseClass(name){
+    const n = name.trim();
+    if (IGNORE.some(k => n.toLowerCase() === k)) return null;
+    const isNg = /불량|NG|defect|bad/i.test(n);
+    const kind = n.split(/[_\-\s]/)[0].replace(/양품|불량|OK|NG/gi,'') || n;
+    return { kind, state: isNg ? '불량' : '양품' };
+  }
+
+  function judge(pred){
+    // pred: [{className, probability}]
+    const top = pred.reduce((a,b) => b.probability > a.probability ? b : a);
+    const parsed = parseClass(top.className);
+    if (!parsed) return null; // 배경
+    const result = top.probability < threshold() ? '재검' : parsed.state;
+    return { kind: parsed.kind, result, confidence: top.probability, raw: top.className };
+  }
+
+  // ---------- 인식 ----------
+  function renderProbs(pred){
+    const sorted = [...pred].sort((a,b) => b.probability - a.probability);
+    $('probs').innerHTML = sorted.map(p => `
+      <div class="prob"><span>${escapeHtml(p.className)}</span>
+      <div class="bar"><i style="width:${(p.probability*100).toFixed(0)}%"></i></div>
+      <b>${(p.probability*100).toFixed(0)}%</b></div>`).join('');
+  }
+
+  function demoPredict(){
+    // 샘플 데이터: 무작위 예측값 생성 (실제 기업 데이터 아님)
+    const target = Math.floor(Math.random() * DEMO_CLASSES.length);
+    const hard = Math.random() < 0.15; // 15%는 애매한 사진(재검 유도)
+    const topP = hard ? 0.5 + Math.random()*0.25 : 0.85 + Math.random()*0.14;
+    const rest = DEMO_CLASSES.map(() => Math.random());
+    const restSum = rest.reduce((a,b,i)=> i === target ? a : a + b, 0);
+    return DEMO_CLASSES.map((c,i) => ({ className:c, probability: i === target ? topP : (1 - topP) * rest[i] / restSum }));
+  }
+
+  async function predictFrom(source){
+    if (demo) return demoPredict();
+    return await model.predict(source);
+  }
+
+  async function loop(){
+    if (!running) return;
+    if (webcam){ webcam.update(); }
+    try {
+      lastPred = await predictFrom(webcam ? webcam.canvas : null);
+      renderProbs(lastPred);
+    } catch(e){ console.error(e); }
+    loopId = setTimeout(() => requestAnimationFrame(loop), demo ? 700 : 120);
+  }
+
+  function record(){
+    if (!lastPred) return;
+    const j = judge(lastPred);
+    if (!j){ showVerdict(null); return; }
+    const now = new Date();
+    const item = {
+      ts: now.getTime(), line: $('line').value.trim() || '-', lot: $('lot').value.trim() || '-',
+      kind: j.kind, result: j.result, confidence: Number(j.confidence.toFixed(3)), sample: demo
+    };
+    log.push(item);
+    if (log.length > 2000) log = log.slice(-2000);
+    localStorage.setItem(STORE_KEY, JSON.stringify(log));
+    showVerdict(item);
+    renderDashboard();
+  }
+
+  function showVerdict(item){
+    const v = $('verdict');
+    if (!item){
+      v.className = 'verdict'; $('vBig').textContent = '배경';
+      $('vClass').textContent = '부품이 인식되지 않았어요'; $('vConf').textContent = '-';
+      $('vTime').textContent = fmtTime(new Date()); $('vLot').textContent = '-';
+      return;
+    }
+    const cls = item.result === '양품' ? 'ok' : item.result === '불량' ? 'ng' : 're';
+    v.className = 'verdict ' + cls;
+    $('vBig').textContent = item.result;
+    $('vClass').textContent = item.kind + (item.sample ? ' (샘플)' : '');
+    $('vConf').textContent = (item.confidence*100).toFixed(1) + '%';
+    $('vTime').textContent = fmtTime(new Date(item.ts));
+    $('vLot').textContent = `${item.line} · ${item.lot}`;
+  }
+
+  // ---------- 대시보드 ----------
+  function renderDashboard(){
+    const ok = log.filter(r => r.result==='양품').length;
+    const ng = log.filter(r => r.result==='불량').length;
+    const re = log.filter(r => r.result==='재검').length;
+    $('kTotal').textContent = log.length;
+    $('kOk').textContent = ok; $('kNg').textContent = ng; $('kRe').textContent = re;
+    $('kRate').textContent = (ok+ng ? (ng/(ok+ng)*100).toFixed(1) : 0) + '%';
+
+    // 종류별
+    const byKind = {};
+    log.forEach(r => { (byKind[r.kind] ||= {양품:0,불량:0,재검:0})[r.result]++; });
+    const kinds = Object.keys(byKind);
+    if (!kinds.length){ $('byClass').innerHTML = '<div class="empty">데이터가 없어요.</div>'; }
+    else {
+      const max = Math.max(...kinds.map(k => byKind[k].양품+byKind[k].불량+byKind[k].재검));
+      $('byClass').innerHTML = kinds.map(k => {
+        const c = byKind[k], t = c.양품+c.불량+c.재검, w = t/max*100;
+        return `<div class="stackRow"><span>${escapeHtml(k)}</span>
+          <div class="stackBar" style="width:${w}%;min-width:12px">
+            <i style="flex:${c.양품};background:var(--ok)"></i>
+            <i style="flex:${c.불량};background:var(--ng)"></i>
+            <i style="flex:${c.재검};background:var(--re)"></i>
+          </div><b>${t}</b></div>`;
+      }).join('');
+    }
+
+    // 분 단위 불량률 추이 (최근 15구간)
+    const buckets = {};
+    log.forEach(r => {
+      const d = new Date(r.ts); const key = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      (buckets[key] ||= {ok:0,ng:0,n:0});
+      if (r.result==='양품') buckets[key].ok++;
+      if (r.result==='불량') buckets[key].ng++;
+      buckets[key].n++;
+    });
+    const keys = Object.keys(buckets).sort().slice(-15);
+    if (!keys.length){ $('trend').innerHTML = '<div class="empty">데이터가 없어요.</div>'; }
+    else {
+      const W=480,H=170,P=30;
+      const pts = keys.map((k,i) => {
+        const b = buckets[k]; const rate = b.ok+b.ng ? b.ng/(b.ok+b.ng)*100 : 0;
+        const x = keys.length===1 ? W/2 : P + i*(W-2*P)/(keys.length-1);
+        const y = H-P - rate/100*(H-2*P);
+        return {x,y,rate,k,n:b.n};
+      });
+      const grid = [0,50,100].map(v => {
+        const y = H-P - v/100*(H-2*P);
+        return `<line x1="${P}" x2="${W-P}" y1="${y}" y2="${y}" stroke="#e3e7ee"/><text x="4" y="${y+4}" font-size="10" fill="#7a8496">${v}%</text>`;
+      }).join('');
+      const path = pts.map((p,i) => (i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+      const dots = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#d64545"><title>${p.k} 불량률 ${p.rate.toFixed(1)}% (${p.n}건)</title></circle>`).join('');
+      const labels = pts.map((p,i) => (keys.length<=6 || i%2===0) ? `<text x="${p.x}" y="${H-8}" font-size="10" text-anchor="middle" fill="#7a8496">${p.k}</text>` : '').join('');
+      $('trend').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="분 단위 불량률 추이">${grid}<path d="${path}" fill="none" stroke="#d64545" stroke-width="2"/>${dots}${labels}</svg>`;
+    }
+
+    // 기록 표 (최근 30건)
+    const recent = log.slice(-30).reverse();
+    $('logBody').innerHTML = recent.length ? recent.map(r => {
+      const cls = r.result==='양품'?'ok':r.result==='불량'?'ng':'re';
+      return `<tr><td>${fmtTime(new Date(r.ts))}</td><td>${escapeHtml(r.line)}</td><td>${escapeHtml(r.lot)}</td>
+        <td>${escapeHtml(r.kind)}${r.sample?'<span class="sample">샘플</span>':''}</td>
+        <td><span class="pill ${cls}">${r.result}</span></td><td>${(r.confidence*100).toFixed(1)}%</td></tr>`;
+    }).join('') : '<tr><td colspan="6" class="empty">아직 기록이 없어요.</td></tr>';
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ---------- 버튼 ----------
+  function enableControls(){
+    $('btnStart').disabled = false; $('btnJudge').disabled = false;
+    $('imgFile').disabled = demo;
+  }
+
+  $('th').addEventListener('input', () => $('thVal').textContent = $('th').value + '%');
+
+  $('btnLoad').addEventListener('click', async () => {
+    let url = $('modelUrl').value.trim();
+    if (!url){ setStatus('모델 URL을 입력해 주세요.', 'err'); return; }
+    if (!url.endsWith('/')) url += '/';
+    if (typeof tmImage === 'undefined'){ setStatus('Teachable Machine 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.', 'err'); return; }
+    setStatus('모델을 불러오는 중이에요...');
+    try {
+      model = await tmImage.load(url + 'model.json', url + 'metadata.json');
+      demo = false;
+      setStatus(`모델 불러오기 완료 · 클래스 ${model.getTotalClasses()}개: ${model.getClassLabels().join(', ')}`, 'ok');
+      enableControls();
+    } catch(e){
+      console.error(e);
+      setStatus('모델을 불러오지 못했어요. Teachable Machine에서 "모델 업로드" 후 받은 공유 링크인지 확인해 주세요.', 'err');
+    }
+  });
+
+  $('btnDemo').addEventListener('click', () => {
+    stop();
+    demo = true; model = null;
+    setStatus('데모 모드: 웹캠·모델 없이 무작위 "샘플 데이터"로 판정해요. 실제 기업 데이터가 아니에요.', 'ok');
+    $('placeholder').innerHTML = '데모 모드 (샘플 데이터)<br>볼트·너트·와셔 가상 부품을 판정해요.';
+    enableControls();
+  });
+
+  async function start(){
+    if (running) return;
+    if (!demo && !webcam){
+      try {
+        webcam = new tmImage.Webcam(320, 240, false);
+        await webcam.setup({ facingMode: 'environment' });
+        await webcam.play();
+        $('placeholder').style.display = 'none';
+        $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
+        $('stage').appendChild(webcam.canvas);
+      } catch(e){
+        console.error(e); webcam = null;
+        setStatus('웹캠을 켤 수 없어요. 카메라 권한을 허용하거나, 아래 "사진으로 테스트"를 이용해 주세요.', 'err');
+        return;
+      }
+    }
+    running = true;
+    $('liveBadge').style.display = 'block';
+    $('btnStart').disabled = true; $('btnStop').disabled = false;
+    loop();
+    const iv = Number($('interval').value);
+    if (iv > 0) autoTimer = setInterval(record, iv);
+  }
+
+  function stop(){
+    running = false;
+    clearTimeout(loopId); clearInterval(autoTimer); autoTimer = null;
+    $('liveBadge').style.display = 'none';
+    if (model || demo) $('btnStart').disabled = false;
+    $('btnStop').disabled = true;
+  }
+
+  $('btnStart').addEventListener('click', start);
+  $('btnStop').addEventListener('click', stop);
+  $('interval').addEventListener('change', () => {
+    if (!running) return;
+    clearInterval(autoTimer); autoTimer = null;
+    const iv = Number($('interval').value);
+    if (iv > 0) autoTimer = setInterval(record, iv);
+  });
+
+  $('btnJudge').addEventListener('click', async () => {
+    if (!running){
+      // 정지 상태에서 한 번만 판정
+      if (demo){ lastPred = demoPredict(); renderProbs(lastPred); }
+      else if (webcam){ webcam.update(); lastPred = await model.predict(webcam.canvas); renderProbs(lastPred); }
+    }
+    record();
+  });
+
+  $('imgFile').addEventListener('change', async (ev) => {
+    const f = ev.target.files[0];
+    if (!f || !model) return;
+    stop();
+    const img = new Image();
+    img.onload = async () => {
+      $('placeholder').style.display = 'none';
+      $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
+      $('stage').appendChild(img);
+      lastPred = await model.predict(img);
+      renderProbs(lastPred);
+      record();
+    };
+    img.src = URL.createObjectURL(f);
+  });
+
+  $('btnReset').addEventListener('click', () => {
+    if (!confirm('판정 기록을 모두 지울까요?')) return;
+    log = []; localStorage.removeItem(STORE_KEY);
+    renderDashboard(); $('verdict').className = 'verdict'; $('vBig').textContent = '대기';
+    ['vClass','vConf','vTime','vLot'].forEach(id => $(id).textContent = '-');
+  });
+
+  renderDashboard();
+})();
+</script>
+</body>
+</html>
