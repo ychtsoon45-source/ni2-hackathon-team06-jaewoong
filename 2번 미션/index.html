@@ -16,7 +16,6 @@
   html{-webkit-text-size-adjust:100%}
   body{margin:0;font-family:"Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;letter-spacing:-.01em}
 
-  /* 상단 바 */
   .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
   .topbar .in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
   .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#0f172a);display:grid;place-items:center;flex:0 0 auto}
@@ -25,6 +24,7 @@
   .brand h1 small{font-weight:600;color:var(--sub);font-size:.8rem;margin-left:4px}
   .brand p{margin:0;font-size:.78rem;color:var(--sub)}
   .chip{margin-left:auto;font-size:.75rem;font-weight:600;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:5px 10px;white-space:nowrap}
+  .today{font-size:.78rem;font-weight:600;color:#374151;white-space:nowrap}
 
   main{max-width:1240px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
   .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
@@ -33,18 +33,23 @@
 
   .section{padding:16px 0;border-top:1px solid var(--line)}
   .section:first-of-type{border-top:0;padding-top:0}
-  .sec-title{font-size:.8rem;font-weight:700;color:var(--sub);text-transform:none;margin:0 0 10px;display:flex;align-items:center;gap:6px}
+  .sec-title{font-size:.8rem;font-weight:700;color:var(--sub);margin:0 0 10px;display:flex;align-items:center;gap:6px}
   .sec-title i{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font-style:normal;font-size:.7rem;font-weight:800}
 
   label{font-size:.8rem;font-weight:600;color:#374151;display:block;margin:0 0 6px}
   .field + .field{margin-top:12px}
-  input[type=text],input[type=url],select{width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.92rem;background:#fff;color:var(--ink);transition:border-color .15s, box-shadow .15s}
-  input[type=text]:focus,input[type=url]:focus,select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  input[type=text],input[type=url],input[type=date],input[type=number],select{width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.92rem;background:#fff;color:var(--ink);transition:border-color .15s, box-shadow .15s}
+  input:focus,select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .grid3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
   .inline{display:flex;gap:8px}
   .inline > input{flex:1}
+  .unit{position:relative}
+  .unit input{padding-right:40px}
+  .unit span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.85rem;color:var(--sub);pointer-events:none}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font:inherit;font-size:.78rem;font-weight:600;color:#374151;cursor:pointer}
+  .chips button:hover{border-color:var(--brand);color:var(--brand)}
 
-  /* 버튼 */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border:1px solid transparent;border-radius:10px;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s,transform .06s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
   .btn svg{width:18px;height:18px;flex:0 0 auto}
   .btn:active:not(:disabled){transform:translateY(1px)}
@@ -56,9 +61,16 @@
   .btn-dark:hover:not(:disabled){background:#1e293b}
   .btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
   .btn-outline:hover:not(:disabled){background:var(--soft);border-color:#d1d5db}
+  .btn-stop{background:#ef4444;color:#111;border-color:#dc2626}
+  .btn-stop:hover:not(:disabled){background:#dc2626}
+  .btn-stop:disabled{opacity:.55}
   .btn-ghost{background:transparent;color:var(--brand);height:auto;padding:6px 0;font-size:.85rem}
   .btn-ghost:hover:not(:disabled){text-decoration:underline}
-  .btn-danger{background:#fff;color:var(--ng);border-color:#fecaca;height:34px;padding:0 12px;font-size:.8rem}
+  .btn-soft{background:var(--brand-soft);color:var(--brand)}
+  .btn-soft:hover:not(:disabled){background:#dbe6ff}
+  .btn-sm{height:34px;padding:0 12px;font-size:.8rem;border-radius:8px}
+  .btn-sm svg{width:14px;height:14px}
+  .btn-danger{background:#fff;color:var(--ng);border-color:#fecaca}
   .btn-danger:hover:not(:disabled){background:var(--ng-soft)}
   .btn-lg{height:52px;font-size:1rem;border-radius:12px}
   .controls{display:grid;grid-template-columns:1.3fr 1fr 1.3fr;gap:8px;margin-top:12px}
@@ -72,12 +84,10 @@
   .status.err{background:var(--ng-soft);color:#991b1b;border-color:#fecaca}
   .status.err::before{background:var(--ng)}
 
-  /* 슬라이더 */
   .slider{display:flex;align-items:center;gap:12px;height:44px}
   .slider input{flex:1;accent-color:var(--brand)}
   .slider b{min-width:52px;text-align:center;font-size:.9rem;background:var(--brand-soft);color:var(--brand);border-radius:8px;padding:4px 0}
 
-  /* 카메라 영역 */
   #stage{position:relative;background:#0b1220;border-radius:12px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;overflow:hidden}
   #stage canvas,#stage img{width:100%;height:100%;object-fit:contain;display:block}
   #stage .placeholder{color:#94a3b8;font-size:.88rem;text-align:center;padding:20px;line-height:1.7}
@@ -91,14 +101,44 @@
   #imgFile:disabled + label{opacity:.4;cursor:not-allowed;pointer-events:none}
   #imgFile:focus-visible + label{box-shadow:0 0 0 3px rgba(37,99,235,.3)}
 
-  .probs{margin-top:12px;display:grid;gap:6px}
-  .prob{display:grid;grid-template-columns:minmax(80px,120px) 1fr 44px;gap:10px;align-items:center;font-size:.8rem}
-  .prob span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .prob .bar{height:8px;background:#eef1f6;border-radius:99px;overflow:hidden}
-  .prob .bar i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .2s}
-  .prob b{text-align:right;font-variant-numeric:tabular-nums}
+  /* 실시간 인식 결과: 같은 종류끼리 묶음 */
+  .probs{display:grid;gap:10px}
+  .pgroup{border:1px solid var(--line);border-radius:10px;padding:10px 12px;transition:border-color .2s, background .2s}
+  .pgroup.top{border-color:#bfd2ff;background:#f8faff}
+  .pgroup-head{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;font-weight:800;margin-bottom:6px}
+  .pgroup-head small{font-weight:600;color:var(--sub)}
+  .prow{display:grid;grid-template-columns:44px 1fr 46px;gap:10px;align-items:center;font-size:.8rem}
+  .prow + .prow{margin-top:4px}
+  .prow .tag{font-weight:700}
+  .prow .tag.ok{color:var(--ok)} .prow .tag.ng{color:var(--ng)} .prow .tag.etc{color:var(--sub)}
+  .prow .bar{height:8px;background:#eef1f6;border-radius:99px;overflow:hidden}
+  .prow .bar i{display:block;height:100%;border-radius:99px;transition:width .2s}
+  .prow .bar i.ok{background:var(--ok)} .prow .bar i.ng{background:var(--ng)} .prow .bar i.etc{background:var(--mute)}
+  .prow b{text-align:right;font-variant-numeric:tabular-nums}
+  .prow.best b,.prow.best .tag{text-decoration:underline;text-underline-offset:3px}
 
-  /* 결과 */
+  /* 분류 장치 */
+  .sorter{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--soft)}
+  .belt{position:relative;height:30px;border-radius:8px;background:repeating-linear-gradient(90deg,#d6dbe4 0 14px,#e7ebf1 14px 28px);overflow:hidden;margin-bottom:10px}
+  .belt.moving{animation:belt 1s linear infinite}
+  @keyframes belt{to{background-position:28px 0}}
+  .belt .item{position:absolute;top:5px;left:-30px;width:20px;height:20px;border-radius:6px;background:#64748b;opacity:0}
+  .belt .item.go{animation:item 0.9s ease-in forwards}
+  @keyframes item{0%{left:-30px;opacity:1}85%{left:calc(100% - 26px);opacity:1}100%{left:calc(100% - 26px);opacity:0}}
+  .bins{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .bin{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;transition:transform .15s, box-shadow .15s}
+  .bin span{display:block;font-size:.72rem;font-weight:700;color:var(--sub)}
+  .bin b{font-size:1.3rem;font-variant-numeric:tabular-nums}
+  .bin.ok{border-color:#bbf7d0} .bin.ok b{color:var(--ok)}
+  .bin.ng{border-color:#fecaca} .bin.ng b{color:var(--ng)}
+  .bin.re{border-color:#fde68a} .bin.re b{color:var(--re)}
+  .bin.flash{transform:scale(1.06);box-shadow:0 0 0 4px rgba(37,99,235,.18)}
+  .serial-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--mute);display:inline-block;margin-right:6px}
+  .dot.on{background:var(--ok)}
+  .serial-state{font-size:.8rem;color:var(--sub)}
+  .switch{display:flex;align-items:center;gap:6px;font-size:.8rem;color:#374151;margin:0;font-weight:600}
+
   .verdict{display:flex;align-items:center;gap:16px;border-radius:14px;padding:16px;background:var(--soft);border:1px solid var(--line);margin-bottom:16px;transition:background .2s,border-color .2s}
   .verdict .big{font-size:1.5rem;font-weight:800;min-width:96px;height:64px;display:grid;place-items:center;border-radius:12px;color:#fff;background:#cbd5e1;letter-spacing:-.02em}
   .verdict.ok{background:var(--ok-soft);border-color:#bbf7d0} .verdict.ok .big{background:var(--ok)}
@@ -116,7 +156,8 @@
   .kpi.rate{background:var(--navy);border-color:var(--navy)} .kpi.rate span{color:#94a3b8} .kpi.rate b{color:#fff}
 
   .panel{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
-  .panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .panel-head .acts{display:flex;gap:6px}
   .chartTitle{font-size:.85rem;font-weight:700;margin:0}
   .stack{display:grid;gap:8px}
   .stackRow{display:grid;grid-template-columns:minmax(60px,90px) 1fr 36px;gap:10px;align-items:center;font-size:.8rem}
@@ -146,6 +187,11 @@
     .kpi.rate{grid-column:span 2}
     .brand p{display:none}
   }
+  @media (max-width:520px){
+    .grid3{grid-template-columns:1fr 1fr}
+    .grid3 > :first-child{grid-column:span 2}
+    .today{display:none}
+  }
   @media (max-width:420px){
     .controls{grid-template-columns:1fr 1fr}
     .controls #btnJudge{grid-column:span 2}
@@ -166,7 +212,8 @@
       <h1>라인가드<small>LineGuard</small></h1>
       <p>AI 물체인식 분류 · 불량 판정 · 생산통계 | 6팀 해커트리오 (부천대 전자공학과·스마트팩토리전공)</p>
     </div>
-    <span class="chip">시제품 v0.1</span>
+    <span class="chip">시제품 v0.2</span>
+    <span class="today" id="today"></span>
   </div>
 </header>
 
@@ -184,14 +231,18 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>모델 불러오기
         </button>
       </div>
+      <div class="chips">
+        <button type="button" id="btnPreset">예제 모델: 주조 임펠러 양품/불량 (실제 공장 사진 학습)</button>
+      </div>
       <div class="hint">클래스 이름은 <b>종류_양품</b>, <b>종류_불량</b> 형식을 권장해요 (예: 볼트_양품, 볼트_불량, 배경). "배경"·"없음" 클래스는 기록하지 않아요.</div>
       <button class="btn btn-ghost" id="btnDemo">모델이 없나요? 데모 모드로 체험하기 (샘플 데이터) →</button>
-      <div id="modelStatus" class="status">모델을 불러오거나 데모 모드를 켜 주세요.</div>
+      <div id="modelStatus" class="status">모델을 불러오거나 예제 모델·데모 모드를 선택해 주세요.</div>
     </div>
 
     <div class="section">
       <p class="sec-title"><i>B</i>판정 설정</p>
-      <div class="grid2">
+      <div class="grid3">
+        <div><label for="workDate">작업일</label><input type="date" id="workDate"></div>
         <div><label for="line">라인</label><input type="text" id="line" value="L1"></div>
         <div><label for="lot">로트 번호</label><input type="text" id="lot" value="LOT-001"></div>
       </div>
@@ -203,13 +254,20 @@
         </div>
       </div>
       <div class="field">
-        <label for="interval">판정 방식</label>
-        <select id="interval">
-          <option value="0">수동 · 버튼을 눌러 한 개씩 판정</option>
-          <option value="2000">자동 · 2초마다</option>
-          <option value="3000" selected>자동 · 3초마다</option>
-          <option value="5000">자동 · 5초마다</option>
-        </select>
+        <label for="interval">자동 판정 간격 <span style="font-weight:500;color:var(--sub)">· 직접 입력 (0 = 수동 판정)</span></label>
+        <div class="unit">
+          <input type="number" id="interval" min="0" max="600" step="0.5" value="3" inputmode="decimal">
+          <span>초</span>
+        </div>
+        <div class="chips">
+          <button type="button" data-iv="0">수동</button>
+          <button type="button" data-iv="1">1초</button>
+          <button type="button" data-iv="2">2초</button>
+          <button type="button" data-iv="3">3초</button>
+          <button type="button" data-iv="5">5초</button>
+          <button type="button" data-iv="10">10초</button>
+        </div>
+        <div class="hint" id="ivHint">3초마다 자동으로 판정해요.</div>
       </div>
     </div>
 
@@ -226,7 +284,7 @@
         <button class="btn btn-primary btn-lg" id="btnStart" disabled>
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>판정 시작
         </button>
-        <button class="btn btn-outline btn-lg" id="btnStop" disabled>
+        <button class="btn btn-stop btn-lg" id="btnStop" disabled>
           <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>정지
         </button>
         <button class="btn btn-dark btn-lg" id="btnJudge" disabled>
@@ -243,8 +301,33 @@
     </div>
 
     <div class="section">
-      <p class="sec-title"><i>D</i>실시간 인식 결과</p>
-      <div class="probs" id="probs" style="margin-top:0"><div class="empty">아직 인식 결과가 없어요.</div></div>
+      <p class="sec-title"><i>D</i>실시간 인식 결과 <span style="font-weight:500">· 같은 종류끼리 묶어서 표시</span></p>
+      <div class="probs" id="probs"><div class="empty">아직 인식 결과가 없어요.</div></div>
+    </div>
+
+    <div class="section">
+      <p class="sec-title"><i>E</i>분류 장치 연동 <span style="font-weight:500">· 판정 결과로 양품/불량/재검함 분류</span></p>
+      <div class="sorter">
+        <div class="belt" id="belt"><div class="item" id="beltItem"></div></div>
+        <div class="bins">
+          <div class="bin ok" id="binOk"><span>양품함</span><b id="cOk">0</b></div>
+          <div class="bin ng" id="binNg"><span>불량함</span><b id="cNg">0</b></div>
+          <div class="bin re" id="binRe"><span>재검함</span><b id="cRe">0</b></div>
+        </div>
+        <div class="serial-row">
+          <button class="btn btn-soft btn-sm" id="btnSerial">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6"/><path d="M15 2v6"/><path d="M6 8h12v4a6 6 0 0 1-12 0z"/><path d="M12 18v4"/></svg>분류 장치 연결 (USB)
+          </button>
+          <span class="serial-state"><span class="dot" id="serialDot"></span><span id="serialState">연결 안 됨 · 가상 분류기로 표시 중</span></span>
+        </div>
+        <div class="serial-row">
+          <span class="serial-state">동작 테스트</span>
+          <button class="btn btn-outline btn-sm" data-test="양품">양품</button>
+          <button class="btn btn-outline btn-sm" data-test="불량">불량</button>
+          <button class="btn btn-outline btn-sm" data-test="재검">재검</button>
+        </div>
+        <div class="hint">판정할 때마다 아두이노에 <b>OK</b> / <b>NG</b> / <b>RE</b> 신호를 보내 서보모터가 해당 함으로 분류해요 (9600bps). USB 연결은 PC의 크롬·엣지에서 돼요. 연결이 없어도 위 가상 분류기로 동작을 확인할 수 있어요.</div>
+      </div>
     </div>
   </section>
 
@@ -286,23 +369,29 @@
     <div class="panel">
       <div class="panel-head">
         <p class="chartTitle">최근 판정 기록</p>
-        <button class="btn btn-danger" id="btnReset">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>기록 초기화
-        </button>
+        <div class="acts">
+          <button class="btn btn-soft btn-sm" id="btnCsv">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>CSV 내보내기
+          </button>
+          <button class="btn btn-danger btn-sm" id="btnReset">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>기록 초기화
+          </button>
+        </div>
       </div>
       <div class="tableWrap">
         <table>
-          <thead><tr><th>시각</th><th>라인</th><th>로트</th><th>종류</th><th>판정</th><th>신뢰도</th></tr></thead>
-          <tbody id="logBody"><tr><td colspan="6" class="empty">아직 기록이 없어요.</td></tr></tbody>
+          <thead><tr><th>작업일</th><th>시각</th><th>라인</th><th>로트</th><th>종류</th><th>판정</th><th>신뢰도</th></tr></thead>
+          <tbody id="logBody"><tr><td colspan="7" class="empty">아직 기록이 없어요.</td></tr></tbody>
         </table>
       </div>
-      <div class="hint">기록은 이 브라우저(localStorage)에만 저장돼요. 서버로 보내지 않아요.</div>
+      <div class="hint">기록은 이 브라우저(localStorage)에만 저장돼요. "CSV 내보내기"로 엑셀에서 열 수 있는 파일을 받을 수 있어요.</div>
     </div>
   </section>
 </main>
 
 <footer>
-  라인가드 시제품 v0.1 · 로그인·결제·서버 없이 브라우저에서만 동작 · "샘플" 표시가 붙은 기록은 데모 모드의 실습용 데이터이며 실제 기업 데이터가 아니에요.
+  라인가드 시제품 v0.2 · 로그인·결제·서버 없이 브라우저에서만 동작 · "샘플" 표시가 붙은 기록은 데모 모드의 실습용 데이터이며 실제 기업 데이터가 아니에요.<br>
+  예제 모델 학습 사진: Kaggle "casting product image data for quality inspection" (PILOT TECHNOCAST, CC BY-NC-ND 4.0)
 </footer>
 
 <!-- Teachable Machine 라이브러리 (CDN, 빌드 불필요) -->
@@ -312,8 +401,10 @@
 (() => {
   const $ = id => document.getElementById(id);
   const STORE_KEY = 'lineguard_log_v1';
+  const PRESET_MODEL = 'https://teachablemachine.withgoogle.com/models/0bZ75DLgf/';
   const IGNORE = ['배경','없음','background','none','empty'];
   const DEMO_CLASSES = ['볼트_양품','볼트_불량','너트_양품','너트_불량','와셔_양품','와셔_불량'];
+  const SERIAL_CODE = { '양품':'OK', '불량':'NG', '재검':'RE' };
 
   let model = null, webcam = null, demo = false, running = false;
   let lastPred = null, autoTimer = null, loopId = null;
@@ -325,20 +416,27 @@
   // ---------- 공통 ----------
   const pad = n => String(n).padStart(2,'0');
   const fmtTime = d => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const fmtDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   const threshold = () => Number($('th').value) / 100;
+  const workDateOf = r => r.workDate || fmtDate(new Date(r.ts));
 
   function setStatus(msg, type){
     const el = $('modelStatus');
     el.textContent = msg;
     el.className = 'status' + (type ? ' ' + type : '');
   }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // 날짜: 오늘 날짜 표시 + 작업일 기본값
+  const now0 = new Date();
+  $('today').textContent = `${now0.getFullYear()}년 ${now0.getMonth()+1}월 ${now0.getDate()}일 (${'일월화수목금토'[now0.getDay()]})`;
+  $('workDate').value = fmtDate(now0);
 
   // 클래스 이름 → 종류/상태 해석
   function parseClass(name){
     const n = name.trim();
     if (IGNORE.some(k => n.toLowerCase() === k)) return null;
     const isNg = /불량|(^|[_\s-])NG($|[_\s-])|defect|bad/i.test(n);
-    // "볼트_불량" → 종류 "볼트" / "Class 1" → 종류 "Class 1" (공백은 나누지 않음)
     const idx = n.lastIndexOf('_');
     let kind = idx > 0 ? n.slice(0, idx) : n.replace(/[\s_-]*(양품|불량|OK|NG)$/i, '');
     kind = kind.trim() || n;
@@ -346,7 +444,6 @@
   }
 
   function judge(pred){
-    // pred: [{className, probability}]
     const top = pred.reduce((a,b) => b.probability > a.probability ? b : a);
     const parsed = parseClass(top.className);
     if (!parsed) return null; // 배경
@@ -354,41 +451,52 @@
     return { kind: parsed.kind, result, confidence: top.probability, raw: top.className };
   }
 
-  // ---------- 인식 ----------
+  // ---------- 실시간 인식 결과 (같은 종류끼리 묶음) ----------
   function renderProbs(pred){
-    const sorted = [...pred].sort((a,b) => b.probability - a.probability);
-    $('probs').innerHTML = sorted.map(p => `
-      <div class="prob"><span>${escapeHtml(p.className)}</span>
-      <div class="bar"><i style="width:${(p.probability*100).toFixed(0)}%"></i></div>
-      <b>${(p.probability*100).toFixed(0)}%</b></div>`).join('');
+    const top = pred.reduce((a,b) => b.probability > a.probability ? b : a);
+    const groups = {};
+    pred.forEach(p => {
+      const parsed = parseClass(p.className);
+      const kind = parsed ? parsed.kind : '기타';
+      const state = parsed ? parsed.state : p.className;
+      (groups[kind] ||= []).push({ ...p, state, cls: parsed ? (parsed.state === '불량' ? 'ng' : 'ok') : 'etc' });
+    });
+    const order = Object.keys(groups).sort((a,b) =>
+      Math.max(...groups[b].map(x=>x.probability)) - Math.max(...groups[a].map(x=>x.probability)));
+    $('probs').innerHTML = order.map(kind => {
+      const rows = groups[kind].sort((a,b) => (a.cls==='ok'?0:a.cls==='ng'?1:2) - (b.cls==='ok'?0:b.cls==='ng'?1:2));
+      const sum = rows.reduce((s,r)=>s+r.probability,0);
+      const isTop = rows.some(r => r.className === top.className);
+      return `<div class="pgroup${isTop?' top':''}">
+        <div class="pgroup-head"><span>${escapeHtml(kind)}</span><small>합계 ${(sum*100).toFixed(0)}%</small></div>
+        ${rows.map(r => `<div class="prow${r.className===top.className?' best':''}">
+          <span class="tag ${r.cls}">${escapeHtml(r.state)}</span>
+          <div class="bar"><i class="${r.cls}" style="width:${(r.probability*100).toFixed(0)}%"></i></div>
+          <b>${(r.probability*100).toFixed(0)}%</b></div>`).join('')}
+      </div>`;
+    }).join('');
   }
 
   function demoPredict(){
     // 샘플 데이터: 무작위 예측값 생성 (실제 기업 데이터 아님)
     const target = Math.floor(Math.random() * DEMO_CLASSES.length);
-    const hard = Math.random() < 0.15; // 15%는 애매한 사진(재검 유도)
+    const hard = Math.random() < 0.15;
     const topP = hard ? 0.5 + Math.random()*0.25 : 0.85 + Math.random()*0.14;
     const rest = DEMO_CLASSES.map(() => Math.random());
     const restSum = rest.reduce((a,b,i)=> i === target ? a : a + b, 0);
     return DEMO_CLASSES.map((c,i) => ({ className:c, probability: i === target ? topP : (1 - topP) * rest[i] / restSum }));
   }
 
-  async function predictFrom(source){
-    if (demo) return demoPredict();
-    return await model.predict(source);
-  }
-
   async function loop(){
     if (!running) return;
-    if (webcam){ webcam.update(); }
     try {
-      lastPred = await predictFrom(webcam ? webcam.canvas : null); predSeq++;
-      renderProbs(lastPred);
+      if (demo){ lastPred = demoPredict(); }
+      else if (webcam){ webcam.update(); lastPred = await model.predict(webcam.canvas); }
+      predSeq++; renderProbs(lastPred);
     } catch(e){ console.error(e); }
     loopId = setTimeout(() => requestAnimationFrame(loop), demo ? 700 : 120);
   }
 
-  // 지금 화면으로 새로 인식 (자동·수동 판정 모두 최신 결과로 기록)
   async function freshPredict(){
     if (demo){ lastPred = demoPredict(); }
     else if (webcam && model){ webcam.update(); lastPred = await model.predict(webcam.canvas); }
@@ -407,9 +515,9 @@
     recordedSeq = predSeq;
     const j = judge(lastPred);
     if (!j){ showVerdict(null); return; }
-    const now = new Date();
     const item = {
-      ts: now.getTime(), line: $('line').value.trim() || '-', lot: $('lot').value.trim() || '-',
+      ts: Date.now(), workDate: $('workDate').value || fmtDate(new Date()),
+      line: $('line').value.trim() || '-', lot: $('lot').value.trim() || '-',
       kind: j.kind, result: j.result, confidence: Number(j.confidence.toFixed(3)), sample: demo
     };
     log = loadLog(); // 다른 탭에서 쌓인 기록을 덮어쓰지 않도록 다시 읽기
@@ -418,6 +526,7 @@
     localStorage.setItem(STORE_KEY, JSON.stringify(log));
     showVerdict(item);
     renderDashboard();
+    sortTo(item.result);
   }
 
   function showVerdict(item){
@@ -425,7 +534,7 @@
     if (!item){
       v.className = 'verdict'; $('vBig').textContent = '배경';
       $('vClass').textContent = '부품이 인식되지 않았어요'; $('vConf').textContent = '-';
-      $('vTime').textContent = fmtTime(new Date()); $('vLot').textContent = '-';
+      $('vTime').textContent = `${fmtDate(new Date())} ${fmtTime(new Date())}`; $('vLot').textContent = '-';
       return;
     }
     const cls = item.result === '양품' ? 'ok' : item.result === '불량' ? 'ng' : 're';
@@ -433,8 +542,8 @@
     $('vBig').textContent = item.result;
     $('vClass').textContent = item.kind + (item.sample ? ' (샘플)' : '');
     $('vConf').textContent = (item.confidence*100).toFixed(1) + '%';
-    $('vTime').textContent = fmtTime(new Date(item.ts));
-    $('vLot').textContent = `${item.line} · ${item.lot}`;
+    $('vTime').textContent = `${fmtDate(new Date(item.ts))} ${fmtTime(new Date(item.ts))}`;
+    $('vLot').textContent = `작업일 ${workDateOf(item)} · ${item.line} · ${item.lot}`;
   }
 
   // ---------- 대시보드 ----------
@@ -446,7 +555,6 @@
     $('kOk').textContent = ok; $('kNg').textContent = ng; $('kRe').textContent = re;
     $('kRate').textContent = (ok+ng ? (ng/(ok+ng)*100).toFixed(1) : 0) + '%';
 
-    // 종류별
     const byKind = {};
     log.forEach(r => { (byKind[r.kind] ||= {양품:0,불량:0,재검:0})[r.result]++; });
     const kinds = Object.keys(byKind);
@@ -464,10 +572,10 @@
       }).join('');
     }
 
-    // 분 단위 불량률 추이 (최근 15구간)
+    // 분 단위 불량률 추이 (날짜까지 구분, 최근 15구간)
     const buckets = {};
     log.forEach(r => {
-      const d = new Date(r.ts); const key = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      const d = new Date(r.ts); const key = `${fmtDate(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
       (buckets[key] ||= {ok:0,ng:0,n:0});
       if (r.result==='양품') buckets[key].ok++;
       if (r.result==='불량') buckets[key].ng++;
@@ -476,12 +584,13 @@
     const keys = Object.keys(buckets).sort().slice(-15);
     if (!keys.length){ $('trend').innerHTML = '<div class="empty">데이터가 없어요.</div>'; }
     else {
+      const multiDay = new Set(keys.map(k => k.slice(0,10))).size > 1;
       const W=480,H=170,P=30;
       const pts = keys.map((k,i) => {
         const b = buckets[k]; const rate = b.ok+b.ng ? b.ng/(b.ok+b.ng)*100 : 0;
         const x = keys.length===1 ? W/2 : P + i*(W-2*P)/(keys.length-1);
         const y = H-P - rate/100*(H-2*P);
-        return {x,y,rate,k,n:b.n};
+        return {x,y,rate,k,n:b.n, label: multiDay ? k.slice(5,10).replace('-','/') + ' ' + k.slice(11) : k.slice(11)};
       });
       const grid = [0,50,100].map(v => {
         const y = H-P - v/100*(H-2*P);
@@ -489,21 +598,116 @@
       }).join('');
       const path = pts.map((p,i) => (i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
       const dots = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#d64545"><title>${p.k} 불량률 ${p.rate.toFixed(1)}% (${p.n}건)</title></circle>`).join('');
-      const labels = pts.map((p,i) => (keys.length<=6 || i%2===0) ? `<text x="${p.x}" y="${H-8}" font-size="10" text-anchor="middle" fill="#7a8496">${p.k}</text>` : '').join('');
-      $('trend').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="분 단위 불량률 추이">${grid}<path d="${path}" fill="none" stroke="#d64545" stroke-width="2"/>${dots}${labels}</svg>`;
+      const step = keys.length <= 6 ? 1 : (multiDay ? 3 : 2);
+      const labels = pts.map((p,i) => (i % step === 0) ? `<text x="${p.x}" y="${H-8}" font-size="10" text-anchor="middle" fill="#7a8496">${p.label}</text>` : '').join('');
+      const dayTag = multiDay ? '' : `<text x="${W-P}" y="12" font-size="10" text-anchor="end" fill="#7a8496">${keys[0].slice(0,10)}</text>`;
+      $('trend').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="분 단위 불량률 추이">${grid}${dayTag}<path d="${path}" fill="none" stroke="#d64545" stroke-width="2"/>${dots}${labels}</svg>`;
     }
 
-    // 기록 표 (최근 30건)
     const recent = log.slice(-30).reverse();
     $('logBody').innerHTML = recent.length ? recent.map(r => {
       const cls = r.result==='양품'?'ok':r.result==='불량'?'ng':'re';
-      return `<tr><td>${fmtTime(new Date(r.ts))}</td><td>${escapeHtml(r.line)}</td><td>${escapeHtml(r.lot)}</td>
+      return `<tr><td>${workDateOf(r)}</td><td>${fmtTime(new Date(r.ts))}</td><td>${escapeHtml(r.line)}</td><td>${escapeHtml(r.lot)}</td>
         <td>${escapeHtml(r.kind)}${r.sample?'<span class="sample">샘플</span>':''}</td>
         <td><span class="pill ${cls}">${r.result}</span></td><td>${(r.confidence*100).toFixed(1)}%</td></tr>`;
-    }).join('') : '<tr><td colspan="6" class="empty">아직 기록이 없어요.</td></tr>';
+    }).join('') : '<tr><td colspan="7" class="empty">아직 기록이 없어요.</td></tr>';
   }
 
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // ---------- CSV 내보내기 ----------
+  $('btnCsv').addEventListener('click', () => {
+    log = loadLog();
+    if (!log.length){ alert('내보낼 판정 기록이 없어요.'); return; }
+    const q = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
+    const head = ['기록일시','작업일','라인','로트','종류','판정','신뢰도(%)','데이터 구분'];
+    const rows = log.map(r => { const d = new Date(r.ts); return [
+      `${fmtDate(d)} ${fmtTime(d)}`, workDateOf(r), r.line, r.lot, r.kind, r.result, (r.confidence*100).toFixed(1), r.sample ? '샘플(데모)' : '실제 판정'
+    ].map(q).join(','); });
+    const csv = '\uFEFF' + [head.join(','), ...rows].join('\r\n'); // BOM: 엑셀 한글 깨짐 방지
+    const n = new Date();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+    a.download = `lineguard_${fmtDate(n)}_${pad(n.getHours())}${pad(n.getMinutes())}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  // ---------- 분류 장치 (가상 분류기 + USB 시리얼) ----------
+  const binCount = { '양품':0, '불량':0, '재검':0 };
+  const binEl = { '양품':'binOk', '불량':'binNg', '재검':'binRe' };
+  const cntEl = { '양품':'cOk', '불량':'cNg', '재검':'cRe' };
+  let port = null, writer = null;
+
+  function sortTo(result, isTest){
+    if (!(result in binCount)) return;
+    const item = $('beltItem');
+    item.style.background = result === '양품' ? 'var(--ok)' : result === '불량' ? 'var(--ng)' : 'var(--re)';
+    item.classList.remove('go'); void item.offsetWidth; item.classList.add('go');
+    $('belt').classList.add('moving'); clearTimeout(sortTo.t);
+    sortTo.t = setTimeout(() => {
+      $('belt').classList.remove('moving');
+      if (!isTest){ binCount[result]++; $(cntEl[result]).textContent = binCount[result]; }
+      const b = $(binEl[result]); b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 350);
+    }, 900);
+    sendSerial(SERIAL_CODE[result]);
+  }
+
+  async function sendSerial(code){
+    if (!writer) return;
+    try { await writer.write(new TextEncoder().encode(code + '\n')); }
+    catch(e){ console.error(e); setSerialState(false, '전송 실패 · 장치 연결을 확인해 주세요'); }
+  }
+
+  function setSerialState(on, msg){
+    $('serialDot').className = 'dot' + (on ? ' on' : '');
+    $('serialState').textContent = msg;
+    $('btnSerial').lastChild.textContent = on ? '분류 장치 연결 해제' : '분류 장치 연결 (USB)';
+  }
+
+  if (!('serial' in navigator)){
+    $('btnSerial').disabled = true;
+    setSerialState(false, '이 브라우저는 USB 연결을 지원하지 않아요 (PC 크롬·엣지에서 가능) · 가상 분류기로 표시 중');
+  }
+
+  $('btnSerial').addEventListener('click', async () => {
+    if (port){
+      try { writer && writer.releaseLock(); await port.close(); } catch(e){}
+      port = null; writer = null;
+      setSerialState(false, '연결 안 됨 · 가상 분류기로 표시 중');
+      return;
+    }
+    try {
+      port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 9600 });
+      writer = port.writable.getWriter();
+      setSerialState(true, '연결됨 · 판정 결과를 분류 장치로 보내는 중');
+    } catch(e){
+      console.error(e); port = null; writer = null;
+      setSerialState(false, '연결하지 않았어요 · 가상 분류기로 표시 중');
+    }
+  });
+
+  document.querySelectorAll('[data-test]').forEach(b => b.addEventListener('click', () => sortTo(b.dataset.test, true)));
+
+  // ---------- 자동 판정 간격 (직접 입력) ----------
+  function intervalMs(){
+    const s = parseFloat($('interval').value);
+    if (!(s > 0)) return 0;
+    return Math.round(Math.min(600, Math.max(0.5, s)) * 1000);
+  }
+  function updateIvHint(){
+    const ms = intervalMs(); const raw = parseFloat($('interval').value);
+    $('ivHint').textContent = ms === 0 ? '수동 판정: "지금 판정" 버튼을 누를 때마다 한 개씩 판정해요.'
+      : `${ms/1000}초마다 자동으로 판정해요.` + (raw > 0 && raw < 0.5 ? ' (최소 0.5초)' : raw > 600 ? ' (최대 600초)' : '');
+  }
+  function restartAuto(){
+    clearInterval(autoTimer); autoTimer = null;
+    if (running && intervalMs() > 0) autoTimer = setInterval(autoTick, intervalMs());
+  }
+  $('interval').addEventListener('input', () => { updateIvHint(); restartAuto(); });
+  document.querySelectorAll('[data-iv]').forEach(b => b.addEventListener('click', () => {
+    $('interval').value = b.dataset.iv; updateIvHint(); restartAuto();
+  }));
+  updateIvHint();
 
   // ---------- 버튼 ----------
   function enableControls(){
@@ -513,22 +717,27 @@
 
   $('th').addEventListener('input', () => $('thVal').textContent = $('th').value + '%');
 
-  $('btnLoad').addEventListener('click', async () => {
+  async function loadModel(){
     let url = $('modelUrl').value.trim();
     if (!url){ setStatus('모델 URL을 입력해 주세요.', 'err'); return; }
     if (!url.endsWith('/')) url += '/';
     if (typeof tmImage === 'undefined'){ setStatus('Teachable Machine 라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.', 'err'); return; }
+    stop();
     setStatus('모델을 불러오는 중이에요...');
     try {
       model = await tmImage.load(url + 'model.json', url + 'metadata.json');
       demo = false;
       setStatus(`모델 불러오기 완료 · 클래스 ${model.getTotalClasses()}개: ${model.getClassLabels().join(', ')}`, 'ok');
+      $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
+      $('placeholder').style.display = '';
       enableControls();
     } catch(e){
       console.error(e);
       setStatus('모델을 불러오지 못했어요. Teachable Machine에서 "모델 업로드" 후 받은 공유 링크인지 확인해 주세요.', 'err');
     }
-  });
+  }
+  $('btnLoad').addEventListener('click', loadModel);
+  $('btnPreset').addEventListener('click', () => { $('modelUrl').value = PRESET_MODEL; loadModel(); });
 
   $('btnDemo').addEventListener('click', () => {
     stop();
@@ -546,14 +755,14 @@
       try {
         webcam = new tmImage.Webcam(320, 240, false);
         await webcam.setup({ facingMode: 'environment' });
-        if (webcam.webcam){ webcam.webcam.setAttribute('playsinline',''); webcam.webcam.muted = true; } // iOS 사파리 대응
+        if (webcam.webcam){ webcam.webcam.setAttribute('playsinline',''); webcam.webcam.muted = true; }
         await webcam.play();
         $('placeholder').style.display = 'none';
         $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
         $('stage').appendChild(webcam.canvas);
       } catch(e){
         console.error(e); webcam = null;
-        setStatus('웹캠을 켤 수 없어요. 카메라 권한을 허용하거나, 아래 "사진으로 테스트"를 이용해 주세요.', 'err');
+        setStatus('웹캠을 켤 수 없어요. 카메라 권한을 허용하거나, 아래 "사진으로 판정"을 이용해 주세요.', 'err');
         return;
       }
     }
@@ -561,14 +770,13 @@
     $('liveBadge').style.display = 'block';
     $('btnStart').disabled = true; $('btnStop').disabled = false;
     loop();
-    const iv = Number($('interval').value);
-    if (iv > 0) autoTimer = setInterval(autoTick, iv);
+    restartAuto();
   }
 
   function stop(){
     running = false;
     clearTimeout(loopId); clearInterval(autoTimer); autoTimer = null;
-    if (webcam){ try { webcam.stop(); } catch(e){} webcam = null; } // 정지하면 카메라도 끔
+    if (webcam){ try { webcam.stop(); } catch(e){} webcam = null; }
     $('liveBadge').style.display = 'none';
     if (model || demo) $('btnStart').disabled = false;
     $('btnStop').disabled = true;
@@ -576,14 +784,7 @@
 
   $('btnStart').addEventListener('click', start);
   $('btnStop').addEventListener('click', stop);
-  $('interval').addEventListener('change', () => {
-    if (!running) return;
-    clearInterval(autoTimer); autoTimer = null;
-    const iv = Number($('interval').value);
-    if (iv > 0) autoTimer = setInterval(autoTick, iv);
-  });
 
-  // 다른 탭으로 이동하면 판정을 멈춤 (멈춘 화면이 반복 기록되는 것 방지)
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && running){
       stop();
@@ -591,19 +792,18 @@
     }
   });
 
-  // 다른 탭에서 기록이 바뀌면 이 화면도 갱신
   window.addEventListener('storage', (e) => {
     if (e.key === STORE_KEY || e.key === null){ log = loadLog(); renderDashboard(); }
   });
 
   $('btnJudge').addEventListener('click', async () => {
-    await freshPredict(); // 누를 때마다 새로 인식해서 판정
+    await freshPredict();
     record();
   });
 
   $('imgFile').addEventListener('change', async (ev) => {
     const f = ev.target.files[0];
-    ev.target.value = ''; // 같은 사진을 다시 골라도 판정되게
+    ev.target.value = '';
     if (!f || !model) return;
     stop();
     const img = new Image();
@@ -611,7 +811,6 @@
       $('placeholder').style.display = 'none';
       $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
       $('stage').appendChild(img);
-      // 화면 표시 크기와 상관없이 원본 비율 그대로 판정
       const cv = document.createElement('canvas');
       cv.width = img.naturalWidth; cv.height = img.naturalHeight;
       cv.getContext('2d').drawImage(img, 0, 0);
@@ -625,6 +824,7 @@
   $('btnReset').addEventListener('click', () => {
     if (!confirm('판정 기록을 모두 지울까요?')) return;
     log = []; localStorage.removeItem(STORE_KEY);
+    Object.keys(binCount).forEach(k => { binCount[k] = 0; $(cntEl[k]).textContent = 0; });
     renderDashboard(); $('verdict').className = 'verdict'; $('vBig').textContent = '대기';
     ['vClass','vConf','vTime','vLot'].forEach(id => $(id).textContent = '-');
   });
