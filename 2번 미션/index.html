@@ -224,8 +224,11 @@
   function parseClass(name){
     const n = name.trim();
     if (IGNORE.some(k => n.toLowerCase() === k)) return null;
-    const isNg = /불량|NG|defect|bad/i.test(n);
-    const kind = n.split(/[_\-\s]/)[0].replace(/양품|불량|OK|NG/gi,'') || n;
+    const isNg = /불량|(^|[_\s-])NG($|[_\s-])|defect|bad/i.test(n);
+    // "볼트_불량" → 종류 "볼트" / "Class 1" → 종류 "Class 1" (공백은 나누지 않음)
+    const idx = n.lastIndexOf('_');
+    let kind = idx > 0 ? n.slice(0, idx) : n.replace(/[\s_-]*(양품|불량|OK|NG)$/i, '');
+    kind = kind.trim() || n;
     return { kind, state: isNg ? '불량' : '양품' };
   }
 
@@ -402,6 +405,8 @@
     stop();
     demo = true; model = null;
     setStatus('데모 모드: 웹캠·모델 없이 무작위 "샘플 데이터"로 판정해요. 실제 기업 데이터가 아니에요.', 'ok');
+    $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
+    $('placeholder').style.display = '';
     $('placeholder').innerHTML = '데모 모드 (샘플 데이터)<br>볼트·너트·와셔 가상 부품을 판정해요.';
     enableControls();
   });
@@ -412,6 +417,7 @@
       try {
         webcam = new tmImage.Webcam(320, 240, false);
         await webcam.setup({ facingMode: 'environment' });
+        if (webcam.webcam){ webcam.webcam.setAttribute('playsinline',''); webcam.webcam.muted = true; } // iOS 사파리 대응
         await webcam.play();
         $('placeholder').style.display = 'none';
         $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
@@ -433,6 +439,7 @@
   function stop(){
     running = false;
     clearTimeout(loopId); clearInterval(autoTimer); autoTimer = null;
+    if (webcam){ try { webcam.stop(); } catch(e){} webcam = null; } // 정지하면 카메라도 끔
     $('liveBadge').style.display = 'none';
     if (model || demo) $('btnStart').disabled = false;
     $('btnStop').disabled = true;
@@ -458,6 +465,7 @@
 
   $('imgFile').addEventListener('change', async (ev) => {
     const f = ev.target.files[0];
+    ev.target.value = ''; // 같은 사진을 다시 골라도 판정되게
     if (!f || !model) return;
     stop();
     const img = new Image();
