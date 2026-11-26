@@ -4,87 +4,170 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>라인가드 LineGuard · 6팀 해커트리오</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   :root{
-    --bg:#f3f5f9; --card:#fff; --ink:#1b2333; --sub:#5b6577; --line:#dfe4ec;
-    --navy:#14213d; --ok:#1f9d55; --ng:#d64545; --re:#e0a100; --accent:#2f6fed;
+    --bg:#f4f6fa; --card:#ffffff; --ink:#111827; --sub:#6b7280; --mute:#9ca3af; --line:#e5e7eb; --soft:#f9fafb;
+    --brand:#2563eb; --brand-d:#1d4ed8; --brand-soft:#eff4ff; --navy:#0f172a;
+    --ok:#16a34a; --ok-soft:#ecfdf3; --ng:#dc2626; --ng-soft:#fef2f2; --re:#d97706; --re-soft:#fffbeb;
+    --r:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.06);
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:"Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
-  header{background:var(--navy);color:#fff;padding:14px 20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
-  header h1{margin:0;font-size:1.35rem}
-  header .tag{font-size:.85rem;opacity:.8}
-  main{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
-  .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-  .card h2{margin:0 0 12px;font-size:1.05rem;display:flex;align-items:center;gap:8px}
-  .card h2 .num{background:var(--navy);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem}
-  label{font-size:.85rem;color:var(--sub);display:block;margin:10px 0 4px}
-  input[type=file]{max-width:100%}
-  input[type=text],input[type=url],select{width:100%;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:.95rem}
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .row > *{flex:1 1 120px}
-  button{border:0;border-radius:8px;padding:10px 14px;font-size:.95rem;font-weight:600;cursor:pointer;background:#e8ecf3;color:var(--ink)}
-  button.primary{background:var(--accent);color:#fff}
-  button.dark{background:var(--navy);color:#fff}
-  button.danger{background:#fbe9e9;color:var(--ng)}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  .hint{font-size:.8rem;color:var(--sub);margin-top:6px}
-  .status{font-size:.85rem;margin-top:8px;padding:8px 10px;border-radius:8px;background:#eef3ff;color:#23408e}
-  .status.err{background:#fdecec;color:#a12b2b}
-  .status.ok{background:#e9f7ef;color:#17663a}
-  #stage{position:relative;background:#0e1424;border-radius:10px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:12px}
-  #stage canvas,#stage img{max-width:100%;max-height:100%;display:block}
-  #stage .placeholder{color:#9aa6bd;font-size:.9rem;text-align:center;padding:20px}
-  #liveBadge{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.6);color:#fff;font-size:.8rem;padding:4px 8px;border-radius:6px;display:none}
-  .slider{display:flex;align-items:center;gap:10px}
-  .slider input{flex:1}
-  .slider b{min-width:48px;text-align:right}
-  .probs{margin-top:10px;display:grid;gap:4px}
-  .prob{display:grid;grid-template-columns:110px 1fr 46px;gap:8px;align-items:center;font-size:.82rem}
-  .prob .bar{height:10px;background:#edf0f5;border-radius:5px;overflow:hidden}
-  .prob .bar i{display:block;height:100%;background:var(--accent)}
-  .verdict{display:flex;align-items:center;gap:14px;border-radius:12px;padding:14px;border:2px solid var(--line);margin-bottom:12px}
-  .verdict .big{font-size:1.6rem;font-weight:800;min-width:84px;text-align:center;padding:8px 10px;border-radius:10px;color:#fff;background:#9aa6bd}
-  .verdict.ok{border-color:var(--ok)} .verdict.ok .big{background:var(--ok)}
-  .verdict.ng{border-color:var(--ng)} .verdict.ng .big{background:var(--ng)}
-  .verdict.re{border-color:var(--re)} .verdict.re .big{background:var(--re)}
-  .verdict .meta{font-size:.9rem}
-  .verdict .meta strong{font-size:1.1rem}
-  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
-  .kpi{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
-  .kpi span{display:block;font-size:.75rem;color:var(--sub)}
-  .kpi b{font-size:1.3rem}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:"Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;letter-spacing:-.01em}
+
+  /* 상단 바 */
+  .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+  .topbar .in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#0f172a);display:grid;place-items:center;flex:0 0 auto}
+  .logo svg{width:20px;height:20px}
+  .brand h1{margin:0;font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+  .brand h1 small{font-weight:600;color:var(--sub);font-size:.8rem;margin-left:4px}
+  .brand p{margin:0;font-size:.78rem;color:var(--sub)}
+  .chip{margin-left:auto;font-size:.75rem;font-weight:600;color:var(--brand);background:var(--brand-soft);border-radius:999px;padding:5px 10px;white-space:nowrap}
+
+  main{max-width:1240px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+  .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
+  .card > h2{margin:0 0 16px;font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:10px}
+  .card > h2 .num{width:26px;height:26px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:.8rem}
+
+  .section{padding:16px 0;border-top:1px solid var(--line)}
+  .section:first-of-type{border-top:0;padding-top:0}
+  .sec-title{font-size:.8rem;font-weight:700;color:var(--sub);text-transform:none;margin:0 0 10px;display:flex;align-items:center;gap:6px}
+  .sec-title i{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font-style:normal;font-size:.7rem;font-weight:800}
+
+  label{font-size:.8rem;font-weight:600;color:#374151;display:block;margin:0 0 6px}
+  .field + .field{margin-top:12px}
+  input[type=text],input[type=url],select{width:100%;min-width:0;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.92rem;background:#fff;color:var(--ink);transition:border-color .15s, box-shadow .15s}
+  input[type=text]:focus,input[type=url]:focus,select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .inline{display:flex;gap:8px}
+  .inline > input{flex:1}
+
+  /* 버튼 */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border:1px solid transparent;border-radius:10px;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s,transform .06s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
+  .btn svg{width:18px;height:18px;flex:0 0 auto}
+  .btn:active:not(:disabled){transform:translateY(1px)}
+  .btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(37,99,235,.3)}
+  .btn:disabled{cursor:not-allowed;opacity:.4}
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--brand-d)}
+  .btn-dark{background:var(--navy);color:#fff}
+  .btn-dark:hover:not(:disabled){background:#1e293b}
+  .btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn-outline:hover:not(:disabled){background:var(--soft);border-color:#d1d5db}
+  .btn-ghost{background:transparent;color:var(--brand);height:auto;padding:6px 0;font-size:.85rem}
+  .btn-ghost:hover:not(:disabled){text-decoration:underline}
+  .btn-danger{background:#fff;color:var(--ng);border-color:#fecaca;height:34px;padding:0 12px;font-size:.8rem}
+  .btn-danger:hover:not(:disabled){background:var(--ng-soft)}
+  .btn-lg{height:52px;font-size:1rem;border-radius:12px}
+  .controls{display:grid;grid-template-columns:1.3fr 1fr 1.3fr;gap:8px;margin-top:12px}
+
+  .hint{font-size:.78rem;color:var(--sub);margin-top:6px}
+  .hint b{color:#374151}
+  .status{display:flex;gap:8px;align-items:flex-start;font-size:.82rem;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--soft);color:var(--sub);border:1px solid var(--line)}
+  .status::before{content:"";flex:0 0 8px;height:8px;border-radius:50%;background:var(--mute);margin-top:6px}
+  .status.ok{background:var(--ok-soft);color:#166534;border-color:#bbf7d0}
+  .status.ok::before{background:var(--ok)}
+  .status.err{background:var(--ng-soft);color:#991b1b;border-color:#fecaca}
+  .status.err::before{background:var(--ng)}
+
+  /* 슬라이더 */
+  .slider{display:flex;align-items:center;gap:12px;height:44px}
+  .slider input{flex:1;accent-color:var(--brand)}
+  .slider b{min-width:52px;text-align:center;font-size:.9rem;background:var(--brand-soft);color:var(--brand);border-radius:8px;padding:4px 0}
+
+  /* 카메라 영역 */
+  #stage{position:relative;background:#0b1220;border-radius:12px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  #stage canvas,#stage img{width:100%;height:100%;object-fit:contain;display:block}
+  #stage .placeholder{color:#94a3b8;font-size:.88rem;text-align:center;padding:20px;line-height:1.7}
+  #stage .placeholder svg{width:40px;height:40px;opacity:.6;display:block;margin:0 auto 8px}
+  #liveBadge{position:absolute;left:12px;top:12px;background:rgba(220,38,38,.9);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;display:none;animation:pulse 1.4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.6}}
+
+  .upload{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:.82rem;color:var(--sub)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .upload label{margin:0}
+  #imgFile:disabled + label{opacity:.4;cursor:not-allowed;pointer-events:none}
+  #imgFile:focus-visible + label{box-shadow:0 0 0 3px rgba(37,99,235,.3)}
+
+  .probs{margin-top:12px;display:grid;gap:6px}
+  .prob{display:grid;grid-template-columns:minmax(80px,120px) 1fr 44px;gap:10px;align-items:center;font-size:.8rem}
+  .prob span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .prob .bar{height:8px;background:#eef1f6;border-radius:99px;overflow:hidden}
+  .prob .bar i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .2s}
+  .prob b{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* 결과 */
+  .verdict{display:flex;align-items:center;gap:16px;border-radius:14px;padding:16px;background:var(--soft);border:1px solid var(--line);margin-bottom:16px;transition:background .2s,border-color .2s}
+  .verdict .big{font-size:1.5rem;font-weight:800;min-width:96px;height:64px;display:grid;place-items:center;border-radius:12px;color:#fff;background:#cbd5e1;letter-spacing:-.02em}
+  .verdict.ok{background:var(--ok-soft);border-color:#bbf7d0} .verdict.ok .big{background:var(--ok)}
+  .verdict.ng{background:var(--ng-soft);border-color:#fecaca} .verdict.ng .big{background:var(--ng)}
+  .verdict.re{background:var(--re-soft);border-color:#fde68a} .verdict.re .big{background:var(--re)}
+  .verdict .meta{font-size:.88rem;color:#374151;min-width:0}
+  .verdict .meta strong{font-size:1.15rem;color:var(--ink)}
+  .verdict .meta .hint{margin:2px 0 0}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center}
+  .kpi span{display:block;font-size:.72rem;font-weight:600;color:var(--sub)}
+  .kpi b{display:block;font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
   .kpi.ok b{color:var(--ok)} .kpi.ng b{color:var(--ng)} .kpi.re b{color:var(--re)}
-  .chartTitle{font-size:.85rem;font-weight:700;margin:12px 0 6px}
-  .stack{display:grid;gap:6px}
-  .stackRow{display:grid;grid-template-columns:90px 1fr 40px;gap:8px;align-items:center;font-size:.82rem}
-  .stackBar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:#edf0f5}
+  .kpi.rate{background:var(--navy);border-color:var(--navy)} .kpi.rate span{color:#94a3b8} .kpi.rate b{color:#fff}
+
+  .panel{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+  .chartTitle{font-size:.85rem;font-weight:700;margin:0}
+  .stack{display:grid;gap:8px}
+  .stackRow{display:grid;grid-template-columns:minmax(60px,90px) 1fr 36px;gap:10px;align-items:center;font-size:.8rem}
+  .stackRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stackRow b{text-align:right;font-variant-numeric:tabular-nums}
+  .stackBar{display:flex;height:14px;border-radius:99px;overflow:hidden;background:#eef1f6}
   .stackBar i{display:block;height:100%}
-  .legend{display:flex;gap:12px;font-size:.75rem;color:var(--sub);margin-top:6px}
-  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+  .legend{display:flex;gap:12px;font-size:.72rem;color:var(--sub)}
+  .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:1px}
   svg{width:100%;height:auto;display:block}
-  .tableWrap{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px}
-  table{width:100%;border-collapse:collapse;font-size:.82rem}
-  th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-  th{background:#f7f9fc;position:sticky;top:0}
-  .pill{padding:2px 8px;border-radius:10px;color:#fff;font-size:.75rem;font-weight:700}
-  .pill.ok{background:var(--ok)} .pill.ng{background:var(--ng)} .pill.re{background:var(--re)}
-  .sample{font-size:.7rem;color:#8a5a00;background:#fff4d6;border-radius:6px;padding:1px 6px;margin-left:4px}
-  .empty{color:var(--sub);font-size:.85rem;text-align:center;padding:16px}
-  footer{max-width:1200px;margin:0 auto;padding:4px 16px 24px;font-size:.78rem;color:var(--sub)}
-  details{margin-top:10px;font-size:.85rem}
-  details summary{cursor:pointer;color:var(--accent)}
-  @media (max-width:860px){
-    main{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}
+  .tableWrap{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  th,td{padding:9px 10px;border-bottom:1px solid #f1f3f6;text-align:left;white-space:nowrap}
+  th{background:var(--soft);position:sticky;top:0;font-weight:700;color:var(--sub);font-size:.75rem}
+  tbody tr:hover td{background:#fafbfd}
+  .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.72rem;font-weight:700}
+  .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.ng{background:var(--ng-soft);color:var(--ng)} .pill.re{background:var(--re-soft);color:var(--re)}
+  .sample{font-size:.66rem;font-weight:700;color:#92400e;background:#fef3c7;border-radius:6px;padding:1px 6px;margin-left:6px}
+  .empty{color:var(--mute);font-size:.82rem;text-align:center;padding:18px}
+
+  footer{max-width:1240px;margin:0 auto;padding:0 20px 28px;font-size:.75rem;color:var(--mute);text-align:center}
+
+  @media (max-width:900px){
+    main{grid-template-columns:minmax(0,1fr);padding:12px;gap:12px}
+    .card{padding:16px}
     .kpis{grid-template-columns:repeat(3,1fr)}
-    header h1{font-size:1.15rem}
+    .kpi.rate{grid-column:span 2}
+    .brand p{display:none}
+  }
+  @media (max-width:420px){
+    .controls{grid-template-columns:1fr 1fr}
+    .controls #btnJudge{grid-column:span 2}
+    .inline{flex-direction:column}
+    .inline > input{flex:none}
+    .inline .btn{width:100%}
+    .verdict .big{min-width:80px;height:56px;font-size:1.3rem}
   }
 </style>
 </head>
 <body>
-<header>
-  <h1>라인가드 LineGuard</h1>
-  <span class="tag">AI 물체인식 분류 · 불량 판정 · 생산통계 | 6팀 해커트리오 (부천대 전자공학과·스마트팩토리전공)</span>
+<header class="topbar">
+  <div class="in">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 9.5C8 19.3 5 15.5 5 11V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <div class="brand">
+      <h1>라인가드<small>LineGuard</small></h1>
+      <p>AI 물체인식 분류 · 불량 판정 · 생산통계 | 6팀 해커트리오 (부천대 전자공학과·스마트팩토리전공)</p>
+    </div>
+    <span class="chip">시제품 v0.1</span>
+  </div>
 </header>
 
 <main>
@@ -92,59 +175,77 @@
   <section class="card" aria-labelledby="inTitle">
     <h2 id="inTitle"><span class="num">1</span>입력 · 물체인식 판정</h2>
 
-    <label for="modelUrl">Teachable Machine 모델 URL</label>
-    <div class="row">
-      <input type="url" id="modelUrl" placeholder="https://teachablemachine.withgoogle.com/models/XXXX/">
-      <button class="dark" id="btnLoad" style="flex:0 0 auto">모델 불러오기</button>
-    </div>
-    <div class="hint">클래스 이름은 <b>종류_양품</b>, <b>종류_불량</b> 형식을 권장해요 (예: 볼트_양품, 볼트_불량, 배경). "배경"이나 "없음" 클래스는 기록하지 않아요.</div>
-    <div class="row" style="margin-top:8px">
-      <button id="btnDemo">모델 없이 데모 모드(샘플 데이터)</button>
-    </div>
-    <div id="modelStatus" class="status">모델을 불러오거나 데모 모드를 켜 주세요.</div>
-
-    <div class="row">
-      <div>
-        <label for="line">라인</label>
-        <input type="text" id="line" value="L1">
+    <div class="section">
+      <p class="sec-title"><i>A</i>모델 준비</p>
+      <label for="modelUrl">Teachable Machine 모델 URL</label>
+      <div class="inline">
+        <input type="url" id="modelUrl" placeholder="https://teachablemachine.withgoogle.com/models/XXXX/">
+        <button class="btn btn-dark" id="btnLoad">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>모델 불러오기
+        </button>
       </div>
-      <div>
-        <label for="lot">로트 번호</label>
-        <input type="text" id="lot" value="LOT-001">
+      <div class="hint">클래스 이름은 <b>종류_양품</b>, <b>종류_불량</b> 형식을 권장해요 (예: 볼트_양품, 볼트_불량, 배경). "배경"·"없음" 클래스는 기록하지 않아요.</div>
+      <button class="btn btn-ghost" id="btnDemo">모델이 없나요? 데모 모드로 체험하기 (샘플 데이터) →</button>
+      <div id="modelStatus" class="status">모델을 불러오거나 데모 모드를 켜 주세요.</div>
+    </div>
+
+    <div class="section">
+      <p class="sec-title"><i>B</i>판정 설정</p>
+      <div class="grid2">
+        <div><label for="line">라인</label><input type="text" id="line" value="L1"></div>
+        <div><label for="lot">로트 번호</label><input type="text" id="lot" value="LOT-001"></div>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label for="th">판정 기준값 <span style="font-weight:500;color:var(--sub)">· 신뢰도가 이보다 낮으면 "재검"</span></label>
+        <div class="slider">
+          <input type="range" id="th" min="50" max="99" value="80">
+          <b id="thVal">80%</b>
+        </div>
+      </div>
+      <div class="field">
+        <label for="interval">판정 방식</label>
+        <select id="interval">
+          <option value="0">수동 · 버튼을 눌러 한 개씩 판정</option>
+          <option value="2000">자동 · 2초마다</option>
+          <option value="3000" selected>자동 · 3초마다</option>
+          <option value="5000">자동 · 5초마다</option>
+        </select>
       </div>
     </div>
 
-    <label for="th">불량 판정 기준값 (신뢰도가 이 값보다 낮으면 "재검")</label>
-    <div class="slider">
-      <input type="range" id="th" min="50" max="99" value="80">
-      <b id="thVal">80%</b>
+    <div class="section">
+      <p class="sec-title"><i>C</i>카메라 판정</p>
+      <div id="stage">
+        <div class="placeholder" id="placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>
+          웹캠 영상이 여기에 표시돼요.<br>모바일에서는 후면 카메라를 사용해요.
+        </div>
+        <span id="liveBadge">● 판정 중</span>
+      </div>
+      <div class="controls">
+        <button class="btn btn-primary btn-lg" id="btnStart" disabled>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>판정 시작
+        </button>
+        <button class="btn btn-outline btn-lg" id="btnStop" disabled>
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>정지
+        </button>
+        <button class="btn btn-dark btn-lg" id="btnJudge" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/></svg>지금 판정
+        </button>
+      </div>
+      <div class="upload">
+        <input type="file" id="imgFile" accept="image/*" class="sr-only" disabled>
+        <label for="imgFile" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>사진으로 판정
+        </label>
+        <span>웹캠이 없을 때 이미지 파일로 테스트해요 (모델 불러온 뒤 사용)</span>
+      </div>
     </div>
 
-    <label for="interval">자동 판정 간격</label>
-    <select id="interval">
-      <option value="0">수동 (버튼을 눌러 한 개씩 판정)</option>
-      <option value="2000">자동 2초마다</option>
-      <option value="3000" selected>자동 3초마다</option>
-      <option value="5000">자동 5초마다</option>
-    </select>
-
-    <div class="row" style="margin-top:12px">
-      <button class="primary" id="btnStart" disabled>판정 시작</button>
-      <button id="btnStop" disabled>정지</button>
-      <button class="dark" id="btnJudge" disabled>지금 판정</button>
+    <div class="section">
+      <p class="sec-title"><i>D</i>실시간 인식 결과</p>
+      <div class="probs" id="probs" style="margin-top:0"><div class="empty">아직 인식 결과가 없어요.</div></div>
     </div>
-    <div class="row" style="margin-top:8px">
-      <label style="margin:0;flex:1 1 100%">웹캠이 없으면 사진으로 테스트</label>
-      <input type="file" id="imgFile" accept="image/*" disabled>
-    </div>
-
-    <div id="stage">
-      <div class="placeholder" id="placeholder">웹캠 영상이 여기에 표시돼요.<br>모바일에서는 후면 카메라를 사용해요.</div>
-      <span id="liveBadge">● 판정 중</span>
-    </div>
-
-    <div class="chartTitle">실시간 인식 결과</div>
-    <div class="probs" id="probs"><div class="empty">아직 인식 결과가 없어요.</div></div>
   </section>
 
   <!-- 결과 화면 -->
@@ -156,7 +257,7 @@
       <div class="meta">
         <div><strong id="vClass">-</strong></div>
         <div>신뢰도 <b id="vConf">-</b> · <span id="vTime">-</span></div>
-        <div id="vLot" class="hint" style="margin:0">-</div>
+        <div id="vLot" class="hint">-</div>
       </div>
     </div>
 
@@ -165,33 +266,43 @@
       <div class="kpi ok"><span>양품</span><b id="kOk">0</b></div>
       <div class="kpi ng"><span>불량</span><b id="kNg">0</b></div>
       <div class="kpi re"><span>재검</span><b id="kRe">0</b></div>
-      <div class="kpi"><span>불량률</span><b id="kRate">0%</b></div>
+      <div class="kpi rate"><span>불량률</span><b id="kRate">0%</b></div>
     </div>
-    <div class="hint" style="margin-top:-6px">불량률 = 불량 ÷ (양품 + 불량) × 100, 재검은 따로 집계</div>
+    <div class="hint">불량률 = 불량 ÷ (양품 + 불량) × 100 · 재검은 따로 집계</div>
 
-    <div class="chartTitle">종류별 수량</div>
-    <div class="stack" id="byClass"><div class="empty">데이터가 없어요.</div></div>
-    <div class="legend"><span><i style="background:var(--ok)"></i>양품</span><span><i style="background:var(--ng)"></i>불량</span><span><i style="background:var(--re)"></i>재검</span></div>
-
-    <div class="chartTitle">시간대별 불량률 추이 (분 단위)</div>
-    <div id="trend"><div class="empty">데이터가 없어요.</div></div>
-
-    <div class="chartTitle" style="display:flex;justify-content:space-between;align-items:center">
-      <span>최근 판정 기록</span>
-      <button class="danger" id="btnReset" style="padding:6px 10px;font-size:.8rem">기록 초기화</button>
+    <div class="panel">
+      <div class="panel-head">
+        <p class="chartTitle">종류별 수량</p>
+        <div class="legend"><span><i style="background:var(--ok)"></i>양품</span><span><i style="background:var(--ng)"></i>불량</span><span><i style="background:var(--re)"></i>재검</span></div>
+      </div>
+      <div class="stack" id="byClass"><div class="empty">데이터가 없어요.</div></div>
     </div>
-    <div class="tableWrap">
-      <table>
-        <thead><tr><th>시각</th><th>라인</th><th>로트</th><th>종류</th><th>판정</th><th>신뢰도</th></tr></thead>
-        <tbody id="logBody"><tr><td colspan="6" class="empty">아직 기록이 없어요.</td></tr></tbody>
-      </table>
+
+    <div class="panel">
+      <div class="panel-head"><p class="chartTitle">시간대별 불량률 추이 <span style="font-weight:500;color:var(--sub)">· 분 단위</span></p></div>
+      <div id="trend"><div class="empty">데이터가 없어요.</div></div>
     </div>
-    <div class="hint">기록은 이 브라우저(localStorage)에만 저장돼요. 서버로 보내지 않아요.</div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <p class="chartTitle">최근 판정 기록</p>
+        <button class="btn btn-danger" id="btnReset">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>기록 초기화
+        </button>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>시각</th><th>라인</th><th>로트</th><th>종류</th><th>판정</th><th>신뢰도</th></tr></thead>
+          <tbody id="logBody"><tr><td colspan="6" class="empty">아직 기록이 없어요.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="hint">기록은 이 브라우저(localStorage)에만 저장돼요. 서버로 보내지 않아요.</div>
+    </div>
   </section>
 </main>
 
 <footer>
-  라인가드 시제품 v0.1 · 로그인·결제·서버 없이 브라우저에서만 동작 · "샘플" 표시가 붙은 기록은 데모 모드에서 만든 실습용 데이터이며 실제 기업 데이터가 아니에요.
+  라인가드 시제품 v0.1 · 로그인·결제·서버 없이 브라우저에서만 동작 · "샘플" 표시가 붙은 기록은 데모 모드의 실습용 데이터이며 실제 기업 데이터가 아니에요.
 </footer>
 
 <!-- Teachable Machine 라이브러리 (CDN, 빌드 불필요) -->
@@ -473,7 +584,11 @@
       $('placeholder').style.display = 'none';
       $('stage').querySelectorAll('canvas,img').forEach(n => n.remove());
       $('stage').appendChild(img);
-      lastPred = await model.predict(img);
+      // 화면 표시 크기와 상관없이 원본 비율 그대로 판정
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+      cv.getContext('2d').drawImage(img, 0, 0);
+      lastPred = await model.predict(cv);
       renderProbs(lastPred);
       record();
     };
